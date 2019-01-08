@@ -1,6 +1,6 @@
 # kinesis-stream-adapter
 
-This is spring cloud based aws kinesis stream consumer. This spring cloud based wrapper for the kinesis stream is multi-threaded and handles iterating over shards to consume data from the streams. A gradle version of the project is also available but is not checked in bitbucket
+This is spring cloud based aws kinesis stream consumer. This spring cloud based wrapper for the kinesis stream is multi-threaded and handles iterating over shards to consume data from the streams. 
 
 #Instructions to build and run
 1. Clone the project to local
