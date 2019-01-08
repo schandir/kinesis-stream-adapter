@@ -73,11 +73,11 @@ public class KenesisStreamReciever {
     @Bean
     public KinesisMessageDrivenChannelAdapter kinesisInboundChannel(AmazonKinesis amazonKinesis) {
         KinesisMessageDrivenChannelAdapter adapter =
-                new KinesisMessageDrivenChannelAdapter(amazonKinesis, "TrackedDocument");
+                new KinesisMessageDrivenChannelAdapter(amazonKinesis, "TestStream");
         adapter.setOutputChannel(kinesisReceiveChannel());
         adapter.setConcurrency(10);
-        adapter.setConverter(ByteArrayInputStream::new);
-        //adapter.setConverter(String::new);
+        //adapter.setConverter(ByteArrayInputStream::new);
+        adapter.setConverter(String::new);
         return adapter;
     }
 
