@@ -1,0 +1,71 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'com.boomi.adapter'
+version = '1.0'
+
+description = """"""
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+
+
+
+repositories {
+     maven { url "https://repo.spring.io/milestone" }
+     maven { url "https://repo.spring.io/snapshot" }
+     maven { url "https://dl.bintray.com/rabbitmq/maven-milestones" }
+     maven { url "http://repo.maven.apache.org/maven2" }
+}
+dependencies {
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter', version:'2.0.0.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-integration', version:'2.0.0.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-parent', version:'2.0.0.RELEASE'
+
+    compile group: 'org.springframework.integration', name: 'spring-integration-aws', version:'2.0.0.RELEASE'
+    compile group: 'org.springframework.cloud', name: 'spring-cloud-aws-dependencies', version:'2.0.0.RELEASE'
+    compile group: 'com.amazonaws', name: 'aws-java-sdk-kinesis', version:'1.11.297'
+
+    //Staxon xml to json dependency
+    compile group: 'de.odysseus.staxon', name: 'staxon', version: '1.3'
+
+    //Apache Commons IO
+    compile group: 'commons-io', name: 'commons-io', version: '2.6'
+
+    //Hibernate validator
+    compile group: 'org.hibernate', name: 'hibernate-validator', version: '6.0.14.Final'
+
+}
+
+jar {
+  from files(sourceSets.main.output.classesDir)
+  //exclude 'config'
+  manifest {
+    attributes("Implementation-Title": "kinesis-stream-adapter", "Implementation-Version": version)
+    attributes 'Main-class':'com.boomi.KinesisRecieverApplication'
+    afterEvaluate {
+      Collection classpath = configurations.compile.collect {"$it.name" }
+      attributes("Class-Path" : "config/ " + classpath.join(' '))
+    }
+  }
+}
+
+task zip(type: Zip , dependsOn: jar) {
+  fileMode = 0755
+  from("scripts")
+  into('config'){
+    from("$buildDir/resources/main/config/")
+    from("$buildDir/resources/test/")
+  }
+  into('libs') {
+    from configurations.runtime
+    from("$buildDir/libs/")
+  }
+}
+
+artifacts {
+  archives zip
+}
